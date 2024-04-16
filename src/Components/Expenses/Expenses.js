@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import ExpenseItem from "./ExpenseItem.js";
 import Card from "../UI/Card.js";
 import ExpensesFilter from "./ExpensesFilter.js";
@@ -11,6 +10,10 @@ const Expenses = (props) => {
 
   const filterChangeHandler = (selectedYear) => {
     setFilteredYear(selectedYear);
+    updateFilterInfoText(selectedYear);
+  };
+
+  const updateFilterInfoText = (selectedYear) => {
     if (selectedYear === "2019") {
       setFilterInfoText("2020, 2021, 2022");
     } else if (selectedYear === "2020") {
@@ -22,15 +25,26 @@ const Expenses = (props) => {
     }
   };
 
+  const filterYearHandler = (selectedYear) => {
+    setFilteredYear(selectedYear);
+  };
+
+  const filteredExpenses = props.items.filter((expense) => {
+    return expense.date.getFullYear().toString() === filteredYear;
+  });
+
   return (
     <div>
       <Card className="expenses">
         <ExpensesFilter
           selected={filteredYear}
-          onChangeFilter={filterChangeHandler}
+          onChangeFilter={(selectedYear) => {
+            filterChangeHandler(selectedYear);
+            filterYearHandler(selectedYear);
+          }}
         />
         <p>Data for the years {filterInfoText} is hidden</p>
-        {props.items.map((expense) => (
+        {filteredExpenses.map((expense) => (
           <ExpenseItem
             key={expense.id} // Adding key prop with a unique identifier
             title={expense.title}
